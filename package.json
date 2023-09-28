@@ -1,0 +1,19 @@
+{
+  "devDependencies": {
+    "concurrently": "^8.2.1",
+    "http-server": "^14.1.1",
+    "kame": "^0.12.0",
+    "nodemon": "^3.0.1",
+    "prettier": "^3.0.3",
+    "terser": "^5.20.0",
+    "typescript": "^5.2.2",
+    "yavascript": "^0.0.10"
+  },
+  "scripts": {
+    "start": "meta/start.sh",
+    "build": "meta/build.ts"
+  },
+  "dependencies": {
+    "@suchipi/jsxdom": "^0.3.0"
+  }
+}
