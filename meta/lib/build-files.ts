@@ -1,24 +1,21 @@
 /// <reference types="yavascript" />
 
-import { rootDir } from "./root-dir";
-
-const srcDir = rootDir.concat("src");
-const distDir = rootDir.concat("dist");
+import { SRC_DIR, DIST_DIR } from "./paths";
 
 export function buildFiles() {
-  return ls(srcDir)
+  return ls(SRC_DIR)
     .filter(isFile)
     .map((inputFile) => {
       const outputFile = inputFile
-        .replace(srcDir.toString(), distDir.toString())
+        .replace(SRC_DIR.toString(), DIST_DIR.toString())
         .replace(/\.tsx?$/, ".js");
 
       const outputFileMinified = outputFile.replace(/\.js$/, ".min.js");
 
       return {
-        inputFile,
-        outputFile,
-        outputFileMinified,
+        inputFile: new Path(inputFile),
+        outputFile: new Path(outputFile),
+        outputFileMinified: new Path(outputFileMinified),
       };
     });
 }

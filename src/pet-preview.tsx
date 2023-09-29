@@ -11,10 +11,6 @@
 
 import * as jsxdom from "@suchipi/jsxdom";
 
-// Our compiler is configured to output 'React.createElement', so aliasing this
-// to 'React' makes everything work properly
-const React = jsxdom;
-
 (async function () {
   if (location.href.match(/index\.php/)) {
     console.info("Pet Preview UserScript: Caching pet image and link...")
@@ -52,7 +48,7 @@ const React = jsxdom;
   }
   const { linkHref, imgSrc } = JSON.parse(savedJson);
 
-  let eltoAppend = null;
+  let eltoAppend: null | Element = null;
   if (linkHref != null && imgSrc != null) {
     eltoAppend = (
       <a href={linkHref}>

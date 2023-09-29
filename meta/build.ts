@@ -1,32 +1,60 @@
 #!/usr/bin/env yavascript
 /// <reference types="yavascript" />
 
+import { ROLLUP_CONFIG, rootRel } from "./lib/paths";
 import { buildFiles } from "./lib/build-files";
-import { pullComment } from "./lib/pull-comment";
-import { prependContent } from "./lib/prepend-content";
+import { transformContent } from "./lib/transform-content";
+import { findUserScriptMetaDataComment } from "./lib/find-comment";
 
-for (const { inputFile, outputFile, outputFileMinified } of buildFiles()) {
-  const comment = pullComment(inputFile);
+for (const build of buildFiles()) {
+  console.log("BUILDING:", build);
+  const { inputFile, outputFile, outputFileMinified } = build;
+
+  console.log(`Getting metadata comment from ${rootRel(inputFile)}...`);
+  const inputContent = readFile(inputFile);
+  const commentLoc = findUserScriptMetaDataComment(inputContent);
+  const comment = inputContent.slice(commentLoc.start, commentLoc.end);
 
   ensureDir(dirname(outputFile));
 
+  console.log(`ROLLUP ${rootRel(inputFile)} -> ${rootRel(outputFile)}`);
   exec([
     "npx",
-    "kame",
-    "bundle",
-    "--loader",
-    Path.resolve(__dirname, "kame.config.ts"),
-    "--input",
-    inputFile,
-    "--output",
-    outputFile,
+    "rollup",
+    "--config",
+    ROLLUP_CONFIG.toString(),
+    "--file",
+    outputFile.toString(),
+    inputFile.toString(),
   ]);
 
-  prependContent(comment, outputFile);
+  console.log(`Removing comment from ${rootRel(outputFile)}...`);
+  // remove comment from within the iife so we can put it outside the iife.
+  transformContent(outputFile, (content) => {
+    const commentLoc = findUserScriptMetaDataComment(content);
+    return content.slice(0, commentLoc.start) + content.slice(commentLoc.end);
+  });
 
   ensureDir(dirname(outputFileMinified));
 
-  exec(["npx", "terser", "-o", outputFileMinified, outputFile]);
+  exec([
+    "npx",
+    "terser",
+    "-o",
+    outputFileMinified.toString(),
+    outputFile.toString(),
+  ]);
 
-  prependContent(comment, outputFileMinified);
+  console.log(`Re-adding comment to ${rootRel(outputFile)}...`);
+  transformContent(outputFile, (content) => {
+    return comment + "\n" + content;
+  });
+
+  console.log(`Adding comment to ${rootRel(outputFileMinified)}...`);
+  transformContent(outputFileMinified, (content) => {
+    return comment + "\n" + content;
+  });
+
+  console.log(`Running prettier on ${rootRel(outputFileMinified)}...`);
+  exec(["npx", "prettier", "--write", outputFile.toString()]);
 }
