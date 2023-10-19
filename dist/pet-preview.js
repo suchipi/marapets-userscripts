@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Pet Preview
 // @namespace    https://www.marapets.com/
-// @version      0.2
+// @version      0.3
 // @description  Show a picture of your default pet on all pages
 // @author       Lily Skye
 // @match        *://*.marapets.com/*
