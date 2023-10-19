@@ -7,7 +7,6 @@
     "nodemon": "^3.0.1",
     "prettier": "^3.0.3",
     "rollup": "^3.29.4",
-    "terser": "^5.20.0",
     "typescript": "^5.2.2",
     "yavascript": "^0.0.11"
   },

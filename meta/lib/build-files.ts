@@ -7,16 +7,11 @@ export function buildFiles() {
     .filter(isFile)
     .map((inputFile) => {
       const outputFile = inputFile
-        .toString()
-        .replace(SRC_DIR.toString(), DIST_DIR.toString())
-        .replace(/\.tsx?$/, ".js");
-
-      const outputFileMinified = outputFile.replace(/\.js$/, ".min.js");
-
+        .replace(SRC_DIR, DIST_DIR)
+        .replaceLast(inputFile.basename().replace(/\.tsx?$/, ".js"));
       return {
         inputFile: new Path(inputFile),
         outputFile: new Path(outputFile),
-        outputFileMinified: new Path(outputFileMinified),
       };
     });
 }

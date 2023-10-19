@@ -8,7 +8,7 @@ import { findUserScriptMetaDataComment } from "./lib/find-comment";
 
 for (const build of buildFiles()) {
   console.log("BUILDING:", build);
-  const { inputFile, outputFile, outputFileMinified } = build;
+  const { inputFile, outputFile } = build;
 
   console.log(`Getting metadata comment from ${rootRel(inputFile)}...`);
   const inputContent = readFile(inputFile);
@@ -35,26 +35,11 @@ for (const build of buildFiles()) {
     return content.slice(0, commentLoc.start) + content.slice(commentLoc.end);
   });
 
-  ensureDir(dirname(outputFileMinified));
-
-  exec([
-    "npx",
-    "terser",
-    "-o",
-    outputFileMinified.toString(),
-    outputFile.toString(),
-  ]);
-
   console.log(`Re-adding comment to ${rootRel(outputFile)}...`);
   transformContent(outputFile, (content) => {
     return comment + "\n" + content;
   });
 
-  console.log(`Adding comment to ${rootRel(outputFileMinified)}...`);
-  transformContent(outputFileMinified, (content) => {
-    return comment + "\n" + content;
-  });
-
-  console.log(`Running prettier on ${rootRel(outputFileMinified)}...`);
+  console.log(`Running prettier on ${rootRel(outputFile)}...`);
   exec(["npx", "prettier", "--write", outputFile.toString()]);
 }
