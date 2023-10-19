@@ -9,7 +9,7 @@
     "rollup": "^3.29.4",
     "terser": "^5.20.0",
     "typescript": "^5.2.2",
-    "yavascript": "^0.0.10"
+    "yavascript": "^0.0.11"
   },
   "scripts": {
     "start": "meta/start.sh",

@@ -7,6 +7,7 @@ export function buildFiles() {
     .filter(isFile)
     .map((inputFile) => {
       const outputFile = inputFile
+        .toString()
         .replace(SRC_DIR.toString(), DIST_DIR.toString())
         .replace(/\.tsx?$/, ".js");
 

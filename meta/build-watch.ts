@@ -9,11 +9,11 @@ const tasks = buildFiles().map(({ inputFile, outputFile }) => {
     "npx",
     "rollup",
     "--config",
-    quote(ROLLUP_CONFIG.toString()),
+    quote(ROLLUP_CONFIG),
     "--file",
-    quote(outputFile.toString()),
+    quote(outputFile),
+    quote(inputFile),
     "--watch",
-    quote(inputFile.toString()),
   ].join(" ");
 
   return {
