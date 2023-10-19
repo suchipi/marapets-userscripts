@@ -11,54 +11,37 @@
 (function () {
   "use strict";
 
-  var __getOwnPropSymbols = Object.getOwnPropertySymbols;
-  var __hasOwnProp = Object.prototype.hasOwnProperty;
-  var __propIsEnum = Object.prototype.propertyIsEnumerable;
-  var __objRest = (source, exclude) => {
-    var target = {};
-    for (var prop in source)
-      if (__hasOwnProp.call(source, prop) && exclude.indexOf(prop) < 0)
-        target[prop] = source[prop];
-    if (source != null && __getOwnPropSymbols)
-      for (var prop of __getOwnPropSymbols(source)) {
-        if (exclude.indexOf(prop) < 0 && __propIsEnum.call(source, prop))
-          target[prop] = source[prop];
-      }
-    return target;
-  };
-  const defaultNodeFactory = (type, props) => {
+  const nodeFactory = (type, props) => {
     if (typeof type !== "string") {
       return document.createDocumentFragment();
     }
-    const _a = props,
-      { style, ref: ref2, namespaceURI, children, tagName } = _a,
-      otherProps = __objRest(_a, [
-        "style",
-        "ref",
-        "namespaceURI",
-        "children",
-        "tagName",
-      ]);
+    const otherProps = Object.assign({}, props);
+    {
+      delete otherProps.style;
+      delete otherProps.ref;
+      delete otherProps.namespaceURIref;
+      delete otherProps.childrenref;
+      delete otherProps.tagNameref;
+    }
     let node;
-    if (namespaceURI) {
-      node = document.createElementNS(namespaceURI, type);
+    if (props.namespaceURI) {
+      node = document.createElementNS(props.namespaceURI, type);
     } else {
       node = document.createElement(type);
     }
-    if (style != null) {
-      Object.assign(node.style, style);
+    if (props.style != null) {
+      Object.assign(node.style, props.style);
     }
-    if (ref2 != null) {
-      if (typeof ref2 === "function") {
-        ref2(node);
+    if (props.ref != null) {
+      if (typeof props.ref === "function") {
+        props.ref.call(null, node);
       } else {
-        ref2.current = node;
+        props.ref.current = node;
       }
     }
     Object.assign(node, otherProps);
     return node;
   };
-  let nodeFactory = defaultNodeFactory;
   const jsx = (type, ...args) => {
     let rawProps = null;
     let children = null;

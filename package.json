@@ -16,6 +16,6 @@
     "build": "meta/build.ts"
   },
   "dependencies": {
-    "@suchipi/jsxdom": "^0.3.0"
+    "@suchipi/jsxdom": "^0.4.0"
   }
 }
