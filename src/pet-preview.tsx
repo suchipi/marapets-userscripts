@@ -7,9 +7,11 @@
 // @match        *://*.marapets.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=marapets.com
 // @grant        none
+// @license      MIT
+// @require https://greasyfork.org/scripts/477758-suchipi-jsxdom/code/@suchipijsxdom.js?version=1267093
 // ==/UserScript==
 
-import * as jsxdom from "@suchipi/jsxdom";
+declare var jsxdom: typeof import("@suchipi/jsxdom");
 
 (async function () {
   if (location.href.match(/index\.php/)) {
