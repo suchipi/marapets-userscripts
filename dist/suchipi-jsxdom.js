@@ -1,5 +1,13 @@
+// ==UserScript==
+// @name         @suchipi/jsxdom
+// @version      0.4.1
+// @description  Create DOM elements with a createElement-like jsx function
+// @author       Lily Skye
+// @grant        none
+// @license      MIT
+// ==/UserScript==
 (function () {
-  'use strict';
+  "use strict";
 
   const ref = (...args) => {
     return { current: args.length > 0 ? args[0] : null };
@@ -54,8 +62,7 @@
     if (type === DocumentFragment || typeof type === "string") {
       const node = nodeFactory(type, props);
       for (const child of children) {
-        if (child == null)
-          continue;
+        if (child == null) continue;
         if (typeof child === "object") {
           node.appendChild(child);
         } else {
@@ -71,23 +78,14 @@
   const createElement = jsx;
   const Fragment = DocumentFragment;
 
-  var jsxdom = /*#__PURE__*/Object.freeze({
+  var jsxdom = /*#__PURE__*/ Object.freeze({
     __proto__: null,
     Fragment: Fragment,
     createElement: createElement,
     jsx: jsx,
     nodeFactory: nodeFactory,
-    ref: ref
+    ref: ref,
   });
 
-  // ==UserScript==
-  // @name         @suchipi/jsxdom
-  // @version      0.4.1
-  // @description  Create DOM elements with a createElement-like jsx function
-  // @author       Lily Skye
-  // @grant        none
-  // @license      MIT
-  // ==/UserScript==
   globalThis.jsxdom = jsxdom;
-
 })();
