@@ -13,7 +13,7 @@ import * as jsxdom from "@suchipi/jsxdom";
 
 (async function () {
   if (location.href.match(/index\.php/)) {
-    console.info("Pet Preview UserScript: Caching pet image and link...")
+    console.info("Pet Preview UserScript: Caching pet image and link...");
     // We're on the homepage! Scrape the default pet and save it to localStorage.
 
     const defaultPetLink = document.querySelector(`a[href^="pets.php?id="]`);
@@ -23,34 +23,58 @@ import * as jsxdom from "@suchipi/jsxdom";
     const imgSrc = defaultPetImg?.getAttribute("src");
 
     if (linkHref == null) {
-      console.error(
-        "Pet Preview UserScript: Could not find default pet link",
-      );
+      console.error("Pet Preview UserScript: Could not find default pet link");
     }
     if (imgSrc == null) {
-      console.error(
-        "Pet Preview UserScript: Could not find default pet image",
-      );
+      console.error("Pet Preview UserScript: Could not find default pet image");
     }
 
     // the '1' is the schema version
     localStorage.__userscript_suchipi_pet_preview_1 = JSON.stringify({
       linkHref,
-      imgSrc
+      imgSrc,
     });
   }
 
   const savedJson = localStorage.__userscript_suchipi_pet_preview_1;
   if (typeof savedJson !== "string") {
     console.warn(
-      "Pet Preview UserScript: Pet not cached yet. Click the 'Marapets' logo to cache it!",
+      "Pet Preview UserScript: Pet not cached yet. Click the 'Marapets' logo to cache it!"
     );
   }
   const { linkHref, imgSrc } = JSON.parse(savedJson);
 
-  let eltoAppend: null | Element = null;
-  if (linkHref != null && imgSrc != null) {
-    eltoAppend = (
+  if (imgSrc == null) return;
+
+  const mobileBottomBar = document.querySelector(".mobile_bottombar");
+  let mobileBottomBarIsVisible: boolean = false;
+  if (mobileBottomBar != null) {
+    const rect = mobileBottomBar.getBoundingClientRect();
+    mobileBottomBarIsVisible = rect.width > 0 && rect.height > 0;
+  }
+
+  // On mobile, put the pet preview in the smalldoll div
+  if (mobileBottomBar != null && mobileBottomBarIsVisible) {
+    const smallDoll = mobileBottomBar.querySelector(
+      ".smalldoll"
+    ) as HTMLElement;
+    if (smallDoll != null) {
+      smallDoll.style.position = "relative";
+      smallDoll.style.borderRadius = "8px";
+
+      const img = smallDoll.querySelector("img") as HTMLImageElement;
+      if (img != null) {
+        img.setAttribute("style", "");
+        img.src = imgSrc;
+        img.style.margin = "0";
+        img.style.width = "100%";
+        img.style.height = "100%";
+      }
+    }
+
+    // on desktop, add an element to put the pet preview in
+  } else if (linkHref != null) {
+    document.body.appendChild(
       <a href={linkHref}>
         <img
           className="defaultpet"
@@ -65,8 +89,8 @@ import * as jsxdom from "@suchipi/jsxdom";
         />
       </a>
     );
-  } else if (imgSrc != null) {
-    eltoAppend = (
+  } else {
+    document.body.appendChild(
       <img
         className="defaultpet"
         style={{
@@ -79,9 +103,5 @@ import * as jsxdom from "@suchipi/jsxdom";
         src={imgSrc}
       />
     );
-  }
-
-  if (eltoAppend != null) {
-    document.body.appendChild(eltoAppend);
   }
 })();

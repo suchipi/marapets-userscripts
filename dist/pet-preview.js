@@ -19,9 +19,9 @@
     {
       delete otherProps.style;
       delete otherProps.ref;
-      delete otherProps.namespaceURIref;
-      delete otherProps.childrenref;
-      delete otherProps.tagNameref;
+      delete otherProps.namespaceURI;
+      delete otherProps.children;
+      delete otherProps.tagName;
     }
     let node;
     if (props.namespaceURI) {
@@ -106,11 +106,49 @@
       );
     }
     const { linkHref, imgSrc } = JSON.parse(savedJson);
-    let eltoAppend = null;
-    if (linkHref != null && imgSrc != null) {
-      eltoAppend = jsx(
-        "a",
-        { href: linkHref },
+    if (imgSrc == null) return;
+    const mobileBottomBar = document.querySelector(".mobile_bottombar");
+    let mobileBottomBarIsVisible = false;
+    if (mobileBottomBar != null) {
+      const rect = mobileBottomBar.getBoundingClientRect();
+      mobileBottomBarIsVisible = rect.width > 0 && rect.height > 0;
+    }
+    // On mobile, put the pet preview in the smalldoll div
+    if (mobileBottomBar != null && mobileBottomBarIsVisible) {
+      const smallDoll = mobileBottomBar.querySelector(".smalldoll");
+      if (smallDoll != null) {
+        smallDoll.style.position = "relative";
+        smallDoll.style.borderRadius = "8px";
+        const img = smallDoll.querySelector("img");
+        if (img != null) {
+          img.setAttribute("style", "");
+          img.src = imgSrc;
+          img.style.margin = "0";
+          img.style.width = "100%";
+          img.style.height = "100%";
+        }
+      }
+      // on desktop, add an element to put the pet preview in
+    } else if (linkHref != null) {
+      document.body.appendChild(
+        jsx(
+          "a",
+          { href: linkHref },
+          jsx("img", {
+            className: "defaultpet",
+            style: {
+              width: "75px",
+              height: "75px",
+              position: "fixed",
+              top: "30px",
+              zIndex: "1",
+            },
+            src: imgSrc,
+          }),
+        ),
+      );
+    } else {
+      document.body.appendChild(
         jsx("img", {
           className: "defaultpet",
           style: {
@@ -123,21 +161,6 @@
           src: imgSrc,
         }),
       );
-    } else if (imgSrc != null) {
-      eltoAppend = jsx("img", {
-        className: "defaultpet",
-        style: {
-          width: "75px",
-          height: "75px",
-          position: "fixed",
-          top: "30px",
-          zIndex: "1",
-        },
-        src: imgSrc,
-      });
-    }
-    if (eltoAppend != null) {
-      document.body.appendChild(eltoAppend);
     }
   })();
 })();
