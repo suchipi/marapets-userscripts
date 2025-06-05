@@ -15,7 +15,7 @@ for (const build of buildFiles()) {
   const commentLoc = findUserScriptMetaDataComment(inputContent);
   const comment = inputContent.slice(commentLoc.start, commentLoc.end);
 
-  ensureDir(dirname(outputFile));
+  mkdirp(dirname(outputFile));
 
   console.log(`ROLLUP ${rootRel(inputFile)} -> ${rootRel(outputFile)}`);
   exec([
